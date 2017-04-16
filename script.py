@@ -1,15 +1,19 @@
-import re, os
+import re, os, time
 
-er = ["Ъ", "ъ"]
-fita = ["Ѳ", "ѳ"]
-yat = ["Ѣ", "ѣ"]
-ij = ["Ѵ", "ѵ"]
-i10 = ["І", "і"]
+def current_time():
+    fin_time = time.localtime()
+    return str(fin_time[2]) + "." + str(fin_time[1]) + "." + str(fin_time[0]) + " || " + str(fin_time[3]) + "h " + str(fin_time[4]) + "m " + str(fin_time[5]) + "s"
 
-vowels = "уеыаоэюияёйУЕЫАОЭЯИЮЁЙ"
-other = "ьЬъЪЙй"
-consonants = "цкнгшщзхфвпрлджчсмтьбЦКНГШЩЗХФВПРЛДЖЧСМТЬБ"
-fita_words = ["агаѳья", "анѳимъ", "аѳанасій", "аѳина", "варѳоломей", "голіаѳъ", "дороѳей", "евѳимій",
+ER = ["Ъъ"]
+FITA = ["Ѳѳ"]
+YAT = ["Ѣѣ"]
+IJ = ["Ѵѵ"]
+I10 = ["Іі"]
+
+VOWELS = "уеыаоэюияёйУЕЫАОЭЯИЮЁЙ"
+OTHER = "ьЬъЪЙй"
+CONSONANTS = "цкнгшщзхфвпрлджчсмтьбЦКНГШЩЗХФВПРЛДЖЧСМТЬБ"
+FITA_WORDS = ["агаѳья", "анѳимъ", "аѳанасій", "аѳина", "варѳоломей", "голіаѳъ", "дороѳей", "евѳимій",
               "ероѳей", "марѳа", "матѳей", "меѳодій", "наѳанаилъ", "парѳенонъ", "пиѳагоръ", "руѳь", "саваоѳъ",
               "тимоѳей", "эсѳирь", "іудиѳь", "ѳаддей", "ѳекла", "ѳемида", "ѳемистоклъ", "ѳеодоръ", "ѳёдоръ", "ѳедя",
               "ѳеодосій", "ѳедосій", "ѳеодосія", "ѳеодотъ", "ѳедотъ", "ѳеофанъ", "ѳеофилъ", "ѳерапонтъ", "ѳома", "ѳоминична",
@@ -18,9 +22,9 @@ fita_words = ["агаѳья", "анѳимъ", "аѳанасій", "аѳина", 
               "ѳивы", "ѳракія", "коринѳяне", "парѳяне", "скиѳы", "эѳіопы", "ѳиване", "анаѳема", "акаѳистъ", "апоѳеозъ", "апоѳегма", "ариѳметика",
               "диѳирамбъ", "еѳимоны", "каѳолическій", "каѳедра", "каѳизма", "киѳара", "левіаѳанъ", "логариѳмъ", "мараѳонъ", "миѳъ",
               "миѳологія", "моноѳелитство", "орѳографія", "орѳоэпія", "паѳосъ", "риѳма", "эѳиръ", "ѳиміамъ", "ѳита"]
-ij_words = ["мѵро", "сѵнодъ", "ѵпостась"]
+IJ_WORDS = ["мѵро", "сѵнодъ", "ѵпостась"]
 
-yat_roots = ['великолѣпный', 'человѣческій', 'десятилѣтіе', 'двѣнадцатый', 'послѣдствіе', 'сомнѣваться',
+YAT_ROOTS = ['великолѣпный', 'человѣческій', 'десятилѣтіе', 'двѣнадцатый', 'послѣдствіе', 'сомнѣваться',
              'запечатлѣнъ', 'выслѣживать', 'просвѣщеніе', 'замѣститель', 'застѣнчивый', 'равновѣсіе', 'сильнѣйшій',
              'отнѣкаться', 'примѣчаніе', 'высмѣивать', 'наслѣдство', 'двѣнадцать', 'взбѣситься', 'нѣкоторыхъ',
              'надѣвывалъ', 'издѣваться', 'намѣстникъ', 'праведникъ', 'свирѣпѣетъ', 'богадѣльнѣ', 'исповѣдать',
@@ -77,11 +81,11 @@ def create_yat_roots_data(roots_list, replacer):
     res = []
     for i in roots_list:
         word = re.sub(yat[1], replacer, i)
-        if len(word) > 3 and word[-1] in vowels:
+        if len(word) > 3 and word[-1] in VOWELS:
             word = word[:-1] + "..?"
         res.append(word)
     return res
-yat_roots_marks = create_yat_roots_data(yat_roots, "[Ъъ]")
+YAT_ROOTS_MARKS = create_yat_roots_data(YAT_ROOTS, "[Ъъ]")
 
 
 def create_letter_data(words_list, letters):
@@ -96,8 +100,8 @@ def create_letter_data(words_list, letters):
             res.append("^" + parts[0] + "." + parts[1][:-1] + ".+$")
     return res
 
-fita_marks = create_letter_data(fita_words, fita)
-ij_marks = create_letter_data(ij_words, ij)
+FITA_MARKS = create_letter_data(FITA_WORDS, fita)
+IJ_MARKS = create_letter_data(IJ_WORDS, ij)
 
 def check_i10(word):
     letters = re.findall("[iIl1]", word)
@@ -110,8 +114,8 @@ def check_i10(word):
                 if len(parts) > 1:
                     for i in range(len(parts)):
                         if i > 0:
-                            if parts[i] and re.search(parts[i][0], vowels) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
-                                res += (i10[0] + parts[i])
+                            if parts[i] and re.search(parts[i][0], VOWELS) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
+                                res += (I10[0] + parts[i])
                             else:
                                 res += ("I" + parts[i])
                 word = res
@@ -122,8 +126,8 @@ def check_i10(word):
                 if len(parts) > 1:
                     for i in range(len(parts)):
                         if i > 0:
-                            if parts[i] and re.search(parts[i][0], vowels) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
-                                res += (i10[1] + parts[i])
+                            if parts[i] and re.search(parts[i][0], VOWELS) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
+                                res += (I10[1] + parts[i])
                             else:
                                 res += ("i" + parts[i])
                 word = res
@@ -133,8 +137,8 @@ def check_i10(word):
                 if len(parts) > 1:
                     for i in range(len(parts)):
                         if i > 0:
-                            if parts[i] and re.search(parts[i][0], vowels) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
-                                res += (i10[1] + parts[i])
+                            if parts[i] and re.search(parts[i][0], VOWELS) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
+                                res += (I10[1] + parts[i])
                             else:
                                 res += ("l" + parts[i])
                 word = res
@@ -144,29 +148,29 @@ def check_i10(word):
                 if len(parts) > 1:
                     for i in range(len(parts)):
                         if i > 0:
-                            if  parts[i] and re.search(parts[i][0], vowels) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
-                                res += (i10[1] + parts[i])
+                            if  parts[i] and re.search(parts[i][0], VOWELS) or (parts[0].lower() == "м" and parts[1].lower() == "ръ"):
+                                res += (I10[1] + parts[i])
                             else:
                                 res += ("1" + parts[i])
                 word = res
         return word
     return word
 
-ij_marks = ["^м.р.+$", "^с.нод.+$", "^.постас.+$"]
+IJ_MARKS = ["^м.р.+$", "^с.нод.+$", "^.постас.+$"]
 def check_ij (word):
     upper = re.findall("[VYУ]", word)
     lower = re.findall("[vyу]", word)
     low_word = word.lower()
     if upper or lower:
-        for i in ij_marks:
-            if re.search(i, low_word) and (word[-1] in vowels or word[-1] in other):
+        for i in IJ_MARKS:
+            if re.search(i, low_word) and (word[-1] in VOWELS or word[-1] in OTHER):
                 parts = i[1:-1].split(".")
                 res = ""
                 case = ""
                 if upper:
-                    case = ij[0]
+                    case = IJ[0]
                 elif lower:
-                    case = ij[1]
+                    case = IJ[1]
                 if parts[0]:
                     res = parts[0]
                     res += case
@@ -182,15 +186,15 @@ def check_fita (word):
     lower = re.findall("[оo08]", word)
     low_word = word.lower()
     if upper or lower:
-        for i in fita_marks:
-            if re.search(i, low_word) and (word[-1] in vowels or word[-1] in other):
+        for i in FITA_MARKS:
+            if re.search(i, low_word) and (word[-1] in VOWELS or word[-1] in OTHER):
                 parts = i[1:-1].split(".")
                 res = ""
                 case = ""
                 if upper:
-                    case = fita[0]
+                    case = FITA[0]
                 elif lower:
-                    case = fita[1]
+                    case = FITA[1]
                 if parts[0]:
                     res = parts[0]
                     res += case
@@ -204,11 +208,11 @@ def check_fita (word):
 
 #ьЬъЪ
 def check_yat (word):
-    upper = re.search("[Ъ]", word)
-    lower = re.search("[ъ]", word)
+    upper = re.search("Ъ", word)
+    lower = re.search("ъ", word)
     low_word = word.lower()
     if upper or lower:
-        for i in yat_roots_marks:
+        for i in YAT_ROOTS_MARKS:
             if re.search(i, low_word):
                 if upper:
                     return remask_word(word, i, "upper")
@@ -224,51 +228,56 @@ def remask_word(word, mask, case = "lower"):
     else:
         repl_mask = mask
     if case == "upper":
-        case = yat[0]
+        case = YAT[0]
     else:
-        case = yat[1]
+        case = YAT[1]
     correct_mask = re.sub("\[Ъъ\]", case, repl_mask)
     word = re.sub(repl_mask, correct_mask, word)
     word = re.sub("[\^\$]", "", word)
     print(word)
     return word
     
-def change_dir(path = "", delete=""):
-    for i in os.walk(path):
+def change_dir(inpath, outpath="", delete=""):
+    if not outpath:
+        outpath = inpath
+    try:
+        os.makedirs(outpath)
+    except:
+        pass
+    for i in os.walk(inpath):
         if i[2]:
             for j in i[2]:
-                file_path = i[0] + "\\" + j
-                file_result = ""
-                try:
+			    try:
+					file_path = i[0] + os.sep + j
+					file_result = open(outpath + os.sep + j, "a", encoding="utf-8")
                     a = open(file_path, "r", encoding="utf-8")
                     for k in a:
                         string_result = ""
                         parts = k.split()
-                        if int(parts[2]) < 1919:
-                            word1_parts = parts[0].split("_")
-                            if len(word1_parts[0]) > 1:
-                                word1_parts[0] = check_yat(word1_parts[0])
-                                word1_parts[0] = check_ij(word1_parts[0])
-                                word1_parts[0] = check_fita(word1_parts[0])
-                                word1_parts[0] = check_i10(word1_parts[0])
-                            word1 = "_".join(word1_parts)
+                        word1_parts = parts[0].split("_")
+                        if len(word1_parts[0]) > 1:
+							word1_parts[0] = check_yat(word1_parts[0])
+							word1_parts[0] = check_ij(word1_parts[0])
+							word1_parts[0] = check_fita(word1_parts[0])
+							word1_parts[0] = check_i10(word1_parts[0])
+                        word1 = "_".join(word1_parts)
 			
-                            word2_parts = parts[1].split("_")
-                            if len(word2_parts[0]) > 1:
-                                word2_parts[0] = check_yat(word2_parts[0])
-                                word2_parts[0] = check_ij(word2_parts[0])
-                                word2_parts[0] = check_fita(word2_parts[0])
-                                word2_parts[0] = check_i10(word2_parts[0])
-                            word2 = "_".join(word2_parts)
+						word2_parts = parts[1].split("_")
+                        if len(word2_parts[0]) > 1:
+							word2_parts[0] = check_yat(word2_parts[0])
+							word2_parts[0] = check_ij(word2_parts[0])
+							word2_parts[0] = check_fita(word2_parts[0])
+							word2_parts[0] = check_i10(word2_parts[0])
+                        word2 = "_".join(word2_parts)
 
-                            string_result = "\t".join([word1, word2, parts[2], parts[3], parts[4]])
-                            string_result += "\n"
-                            file_result += string_result
+                        string_result = word1 + " " + word2 + "\t" + parts[2] + "\t" + parts[3] + "\t" + parts[4] + "\n"
+                        file_result.write(string_result)
                     a.close()
-                    a = open("F:\\Projects\\test_res" + "\\" + j + "_checked", "w", encoding="utf-8")
-                    a.write(file_result)
-                    a.close()
-                    print("File finished")
+					file_result.close()
+                    print("Файл ", file_path, " успешно обработан ", current_time())
+                except MemoryError:
+                    print("Ошибка памяти:", j, "; ", current_time())
                 except:
-                    print("Проблема с файлом:", file_path)
+                    print("Ошибка в файле:", j, "; ", current_time())
+                    
 change_dir("F:\\Projects\\test")

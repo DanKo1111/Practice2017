@@ -34,4 +34,4 @@ def current_time():
     return str(fin_time[2]) + "." + str(fin_time[1]) + "." + str(fin_time[0]) + " || " + str(fin_time[3]) + "h " + str(fin_time[4]) + "m " + str(fin_time[5]) + "s"
 
                 
-clear_directory("H:\\Files\\Files6_1", "H:\\Files\\Files6_cleared", False)
+clear_directory("H:\\Files\\Files6_2", "H:\\Files\\Files6_cleared", True)
